@@ -1,22 +1,55 @@
-import React from 'react'
+'use client'
 
-export default function page () {
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { loginUser } from './actions'
+
+export default function LoginForm () {
+  const [login, setLogin] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const router = useRouter()
+
+  const handleSubmit = async (e: React.FocusEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    const formData = new FormData()
+    formData.append('login', login)
+    formData.append('password', password)
+
+    try {
+      await loginUser(formData)
+      setError('')
+      router.push('/lobby')
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message)
+      } else {
+        setError('Login failed. Please try again')
+      }
+    }
+  }
+
   return (
     <main className='min-h-screen flex items-center justify-center bg-gray-100'>
       <div className='flex flex-col justify-center bg-white px-6 py-12 rounded-lg  shadow-md sm:max-w-sm w-full'>
         <h2 className='text-center text-2xl font-bold tracking-tight text-gray-900 mb-8'>
           Sign In
         </h2>
-        <form className='space-y-4'>
+        <form onSubmit={handleSubmit} className='space-y-4'>
           <input
             type='text'
             placeholder='Username or phone'
+            value={login}
+            onChange={({ target: { value } }) => setLogin(value)}
             required
             className='block w-full bg-white border border-gray-300 text-base text-gray-900 placehplder:text-gray-400 px-3 py-2 rounded-md focus:border-indigo-500 sm:text-sm'
           />
           <input
             type='password'
             placeholder='Password'
+            value={password}
+            onChange={({ target: { value } }) => setPassword(value)}
             required
             className='block w-full bg-white border border-gray-300 text-base text-gray-900 placehplder:text-gray-400 px-3 py-2 rounded-md focus:border-indigo-500 sm:text-sm'
           />
@@ -27,6 +60,7 @@ export default function page () {
             Sign in
           </button>
         </form>
+        {error && <p className='mt-4 text-red-500'>{error}</p>}
       </div>
     </main>
   )
