@@ -43,8 +43,8 @@ export default function RegisterForm () {
         </h2>
         <form onSubmit={handleSubmit} className='space-y-4'>
           <input
-            type='email'
-            placeholder='Email'
+            type='text'
+            placeholder='Username'
             value={username}
             onChange={({ target: { value } }) => setUsername(value)}
             required

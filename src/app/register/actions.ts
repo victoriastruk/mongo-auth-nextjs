@@ -13,7 +13,10 @@ export async function registerUser (formData: FormData) {
     throw new Error('Missing required field')
   }
   await connectDB()
-
+  const existingUser = await User.findOne({ $or: [{ username }, { phone }] })
+  if (existingUser) {
+    throw new Error('User with this name or phone already exists')
+  }
   const hashedPassword = await bcrypt.hash(password, 10)
 
   const newUser = new User({
