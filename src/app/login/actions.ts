@@ -25,6 +25,8 @@ export async function loginUser (formData: FormData) {
   if (!isPasswordCorrect) {
     throw new Error('Invalid password')
   }
+  user.lastLoginTime = new Date()
+  await user.save()
 
   return {
     username: user.username
