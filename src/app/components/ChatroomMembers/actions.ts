@@ -3,7 +3,7 @@
 import { connectDB } from '@/lib/mongodb'
 import User from '@/models/User'
 
-export async function getActiveUsers() {
+export async function getActiveUsers () {
   await connectDB()
   const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000)
 
