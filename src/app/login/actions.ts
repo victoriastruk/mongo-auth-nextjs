@@ -1,7 +1,9 @@
 'use server'
+import { redirect } from 'next/navigation'
 import { connectDB } from '@/lib/mongodb'
 import User from '@/models/User'
 import bcrypt from 'bcryptjs'
+import { createSession } from '@/lib/session'
 
 export async function loginUser (formData: FormData) {
   const login = formData.get('login') as string
@@ -25,11 +27,9 @@ export async function loginUser (formData: FormData) {
   if (!isPasswordCorrect) {
     throw new Error('Invalid password')
   }
-
+  await createSession(user.id, user.username)
   user.lastLoginTime = new Date()
   await user.save()
 
-  return {
-    username: user.username
-  }
+  redirect('/lobby')
 }

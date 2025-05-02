@@ -1,6 +1,11 @@
 import { getActiveUsers } from './actions'
+import { logout } from './actions'
 
-export default async function ChatroomMembers () {
+export default async function ChatroomMembers ({
+  currentUser
+}: {
+  currentUser: string
+}) {
   const users = await getActiveUsers()
 
   const usersWithColors = users.map(user => {
@@ -10,8 +15,20 @@ export default async function ChatroomMembers () {
       color: colors[colorIndex]
     }
   })
+
   return (
     <aside className='w-1/3 p-6'>
+      <div className='flex justify-between items-center mb-4 pb-4 border-b-2 border-gray-200'>
+        <span className='text-xl font-medium text-gray-700'>{currentUser}</span>
+        <form action={logout}>
+          <button
+            type='submit'
+            className='bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 cursor-pointer rounded'
+          >
+            Logout
+          </button>
+        </form>
+      </div>
       <h2 className='text-2xl font-semibold mb-4'>Chatroom Members</h2>
       {users.length === 0 ? (
         <p className='text-gray-500 text-base'>
