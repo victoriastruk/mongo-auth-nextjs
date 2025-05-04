@@ -1,0 +1,22 @@
+import { NextResponse } from 'next/server'
+import { connectDB } from '@/lib/mongodb'
+import User from '@/models/User'
+
+export async function GET () {
+  await connectDB()
+
+  const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000)
+
+  const users = await User.find({
+    lastActiveTime: { $gte: tenMinutesAgo }
+  })
+    .select('username _id')
+    .lean()
+
+  const formatted = users.map(user => ({
+    _id: user._id.toString(),
+    username: user.username
+  }))
+
+  return NextResponse.json(formatted)
+}

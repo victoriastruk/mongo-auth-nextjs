@@ -1,20 +1,21 @@
-'use server'
+// 'use server'
 
-import { connectDB } from '@/lib/mongodb'
-import User from '@/models/User'
+// import { connectDB } from '@/lib/mongodb'
+// import User from '@/models/User'
 
-export async function getActiveUsers () {
-  await connectDB()
-  const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000)
+// export async function getActiveUsers () {
+//   await connectDB()
 
-  const users = await User.find({
-    lastActiveTime: { $gte: tenMinutesAgo }
-  })
-    .select('username _id')
-    .lean()
+//   const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000)
 
-  return users.map(user => ({
-    _id: user._id.toString(),
-    username: user.username
-  }))
-}
+//   const users = await User.find({
+//     lastActiveTime: { $gte: tenMinutesAgo }
+//   })
+//     .select('username _id')
+//     .lean()
+
+//   return users.map(user => ({
+//     _id: user._id.toString(),
+//     username: user.username
+//   }))
+// }
