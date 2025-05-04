@@ -1,9 +1,19 @@
 'use server'
-
+import { connectDB } from '@/lib/mongodb'
+import User from '@/models/User'
 import { redirect } from 'next/navigation'
-import { deleteSession } from '@/lib/session'
+import { getSession, deleteSession } from '@/lib/session'
 
 export async function logout () {
-    await deleteSession()
-    redirect('/login')
+  const session = await getSession()
+  await connectDB()
+
+  if (session?.userId) {
+    await User.findByIdAndUpdate(session.userId, {
+      lastActiveTime: null
+    })
   }
+
+  await deleteSession()
+  redirect('/login')
+}

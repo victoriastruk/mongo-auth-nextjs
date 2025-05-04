@@ -1,22 +1,11 @@
 import ChatMessages from '../components/ChatMessages/ChatMessages'
 import ChatroomMembers from '../components/ChatroomMembers/ChatroomMembers'
 import InputMessage from '../components/InputMessage/InputMessage'
-import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
-import { decrypt } from '@/lib/session'
+import { getSession } from '@/lib/session'
 
 export default async function Lobby () {
-  const cookie = (await cookies()).get('session')?.value || null
-
-  if (!cookie) {
-    redirect('/login')
-  }
-
-  const session = await decrypt(cookie)
-  const username = session?.username
-  if (!session?.userId) {
-    redirect('/login')
-  }
+  const session = await getSession()
+  const username = session?.username as string
 
   return (
     <div className='h-screen bg-gray-100 flex items-center justify-center p-4'>
@@ -25,7 +14,7 @@ export default async function Lobby () {
           <ChatMessages />
           <InputMessage />
         </div>
-        <ChatroomMembers currentUser={username as string}/>
+        <ChatroomMembers currentUser={username} />
       </div>
     </div>
   )

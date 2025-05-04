@@ -8,7 +8,7 @@ export async function getActiveUsers () {
   const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000)
 
   const users = await User.find({
-    lastLoginTime: { $gte: tenMinutesAgo }
+    lastActiveTime: { $gte: tenMinutesAgo }
   })
     .select('username _id')
     .lean()
@@ -18,4 +18,3 @@ export async function getActiveUsers () {
     username: user.username
   }))
 }
-
