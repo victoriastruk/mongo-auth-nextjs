@@ -29,6 +29,7 @@ export async function loginUser (formData: FormData) {
   }
   await createSession(user.id, user.username)
   user.lastLoginTime = new Date()
+  user.lastActiveTime = new Date()
   await user.save()
 
   redirect('/lobby')

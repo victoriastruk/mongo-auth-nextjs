@@ -1,7 +1,5 @@
 'use server'
 
-import { redirect } from 'next/navigation'
-import { deleteSession } from '@/lib/session'
 import { connectDB } from '@/lib/mongodb'
 import User from '@/models/User'
 
@@ -21,7 +19,3 @@ export async function getActiveUsers () {
   }))
 }
 
-export async function logout () {
-  await deleteSession()
-  redirect('/login')
-}
