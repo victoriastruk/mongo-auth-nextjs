@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import ActiveTimeUpdater from '../ActiveTimeUpdater/ActiveTimeUpdater'
 import Logout from '../Logout/Logout'
 
 const colors = [
@@ -57,7 +56,6 @@ export default function ChatroomMembers({ currentUser }: { currentUser: string }
 
   return (
     <aside className='w-1/3 p-6'>
-      <ActiveTimeUpdater />
       <div className='flex justify-between items-center mb-4 pb-4 border-b-2 border-gray-200'>
         <span className='text-xl font-medium text-gray-700'>{currentUser}</span>
         <Logout />

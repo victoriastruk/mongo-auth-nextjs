@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, Model } from 'mongoose'
+import mongoose, { Schema, Document, Model, Types } from 'mongoose'
 
 export interface IUser extends Document {
   username: string
@@ -6,6 +6,7 @@ export interface IUser extends Document {
   password: string
   lastLoginTime: Date | null
   lastActiveTime: Date | null
+  chatRoomId: Types.ObjectId | null
 }
 
 const UserSchema = new Schema<IUser>({
@@ -13,7 +14,8 @@ const UserSchema = new Schema<IUser>({
   phone: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   lastLoginTime: { type: Date, default: null },
-  lastActiveTime: { type: Date, default: null }
+  lastActiveTime: { type: Date, default: null },
+  chatRoomId: { type: Types.ObjectId, default: null }
 })
 
 const User: Model<IUser> =
