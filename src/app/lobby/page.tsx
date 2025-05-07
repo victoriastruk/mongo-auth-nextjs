@@ -1,19 +1,68 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+
 import ChatroomMembers from '../components/ChatroomMembers/ChatroomMembers'
 import ChatComponent from '../components/ChatComponent/ChatComponent'
-import { getSession } from '@/lib/session'
+import ChatRoomList from '../components/ChatRoomList/ChatRoomList'
+import Logout from '../components/Logout/Logout'
 
-export default async function Lobby () {
-  const session = await getSession()
-  const username = session?.username as string
-  const userId = session?.userId as string
+export default function Lobby () {
+  const router = useRouter()
+
+  const [, setSelectedRoomId] = useState<string | null>(null)
+  const [userId, setUserId] = useState<string | null>(null)
+  const [username, setUsername] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchSession = async () => {
+      try {
+        const res = await fetch('/api/session')
+        const data = await res.json()
+
+        if (!data?.userId || !data?.username) {
+          router.push('/login')
+        } else {
+          setUserId(data.userId)
+          setUsername(data.username)
+        }
+      } catch (error) {
+        console.error('Failed to fetch session:', error)
+        router.push('/login')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchSession()
+  }, [router])
+
+  if (loading) {
+    return (
+      <div className='h-screen flex items-center justify-center'>
+        Loading...
+      </div>
+    )
+  }
 
   return (
     <div className='h-screen bg-gray-100 flex items-center justify-center p-4'>
-      <div className='w-full max-w-[1224] h-full bg-white rounded-lg shadow-lg flex'>
-        <div className='w-full md:w-2/3  border-gray-200 border-r-2 p-6 flex flex-col justify-between'>
-          <ChatComponent currentUserId={userId} />
+      <div className='w-full max-w-[1224px] h-full bg-white rounded-lg shadow-lg flex'>
+        <div className='w-full md:w-2/3 border-gray-200 border-r-2 p-6 flex flex-col justify-between'>
+          {userId && <ChatComponent currentUserId={userId} />}
         </div>
-        <ChatroomMembers currentUser={username} />
+        <aside className='w-1/3 p-6'>
+          <div className='flex justify-between items-center mb-4 pb-4 border-b-2 border-gray-200'>
+            <span className='text-xl font-medium text-gray-700'>
+              {username}
+            </span>
+            <Logout />
+          </div>
+          <ChatRoomList onSelect={setSelectedRoomId} />
+          <ChatroomMembers />
+        </aside>
       </div>
     </div>
   )

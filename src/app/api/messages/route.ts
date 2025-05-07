@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/session'
 import { connectDB } from '@/lib/mongodb'
 import User from '@/models/User'
-import Message from '@/models/Messages'
+import Message from '@/models/Message'
 
 interface PopulatedMessage {
   _id: string

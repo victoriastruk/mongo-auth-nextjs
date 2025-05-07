@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import Logout from '../Logout/Logout'
 
 const colors = [
   'bg-yellow-500',
@@ -14,7 +13,7 @@ const colors = [
   'bg-teal-500'
 ]
 
-function hashStringToNumber(str: string): number {
+function hashStringToNumber (str: string): number {
   let hash = 0
   for (let i = 0; i < str.length; i++) {
     hash = str.charCodeAt(i) + ((hash << 5) - hash)
@@ -27,7 +26,7 @@ type User = {
   username: string
 }
 
-export default function ChatroomMembers({ currentUser }: { currentUser: string }) {
+export default function ChatroomMembers () {
   const [users, setUsers] = useState<User[]>([])
 
   const fetchUsers = async () => {
@@ -42,7 +41,7 @@ export default function ChatroomMembers({ currentUser }: { currentUser: string }
 
   useEffect(() => {
     fetchUsers()
-    const interval = setInterval(fetchUsers, 1000) 
+    const interval = setInterval(fetchUsers, 1000)
     return () => clearInterval(interval)
   }, [])
 
@@ -55,12 +54,8 @@ export default function ChatroomMembers({ currentUser }: { currentUser: string }
   })
 
   return (
-    <aside className='w-1/3 p-6'>
-      <div className='flex justify-between items-center mb-4 pb-4 border-b-2 border-gray-200'>
-        <span className='text-xl font-medium text-gray-700'>{currentUser}</span>
-        <Logout />
-      </div>
-      <h2 className='text-2xl font-semibold mb-4'>Chatroom Members</h2>
+    <>
+      <h2 className='text-xl font-semibold mb-4'>Chatroom Members</h2>
       {users.length === 0 ? (
         <p className='text-gray-500 text-base'>
           No active users in the last 10 minutes.
@@ -69,12 +64,14 @@ export default function ChatroomMembers({ currentUser }: { currentUser: string }
         <ul className='space-y-4'>
           {usersWithColors.map(user => (
             <li key={user._id} className='flex items-center space-x-3'>
-              <span className={`inline-block w-3 h-3 rounded-full ${user.color}`}></span>
+              <span
+                className={`inline-block w-3 h-3 rounded-full ${user.color}`}
+              ></span>
               <span className='text-lg text-gray-700'>{user.username}</span>
             </li>
           ))}
         </ul>
       )}
-    </aside>
+    </>
   )
 }

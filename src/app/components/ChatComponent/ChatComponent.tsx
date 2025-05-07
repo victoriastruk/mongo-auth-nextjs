@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import CreateChatButton from '../CreateChatButton/CreateChatButton'
 
 async function fetchMessages () {
   const response = await fetch('/api/messages')
@@ -52,7 +53,7 @@ export default function ChatComponent ({
 
     const isNearBottom =
       chatContainer.scrollHeight - chatContainer.scrollTop <=
-      chatContainer.clientHeight + 100 // 100px запас
+      chatContainer.clientHeight + 100 
 
     if (isNearBottom) {
       bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -70,9 +71,10 @@ export default function ChatComponent ({
 
   return (
     <div className='overflow-y-auto flex flex-col flex-1 pr-2'>
-      <h2 className='text-2xl font-semibold mb-4 pb-4 border-b-2 border-gray-200'>
-        Chat
-      </h2>
+      <div className='flex justify-between border-b-2 border-gray-200 mb-4 pb-4'>
+        <h2 className='text-2xl font-semibold'>Chat</h2>
+        <CreateChatButton />
+      </div>
       <div
         ref={chatContainerRef}
         className='flex-1 overflow-y-auto max-h-[calc(100vh-200px)] pr-2'
