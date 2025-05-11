@@ -14,41 +14,38 @@ interface PopulatedMessage {
   }
 }
 
-export async function GET () {
-  try {
-    const session = await getSession()
-    const userId = session?.userId
+export async function GET(req: Request) {
+  await connectDB()
 
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const url = new URL(req.url)
+  const chatRoomId = url.searchParams.get('chatRoomId')
+
+  try {
+    let filter = {}
+
+    if (chatRoomId) {
+      if (chatRoomId === 'null') {
+        filter = { chatRoomId: null }
+      } else {
+        filter = { chatRoomId }
+      }
+    } else {
+      filter = { name: 'Lobby' }
     }
 
-    await connectDB()
-
-    const messages = await Message.find()
+    const messages = await Message.find(filter)
       .sort({ createdAt: 1 })
-      .populate('userId', 'username')
-      .lean<PopulatedMessage[]>()
+      .populate({ path: 'userId', select: 'username' })
+      .lean()
 
-    const formatted = messages.map(m => ({
-      _id: m._id.toString(),
-      message: m.message,
-      username: m.userId.username,
-      userId: m.userId._id.toString(),
-      createdAt: m.createdAt
-    }))
-
-    return NextResponse.json(formatted, { status: 200 })
+    return NextResponse.json(messages)
   } catch (error) {
-    console.error('Error in GET /api/messages:', error)
-    return NextResponse.json(
-      { error: 'Internal Server Error' },
-      { status: 500 }
-    )
+    console.error('Error fetching messages:', error)
+    return NextResponse.json({ error: 'Failed to fetch messages' }, { status: 500 })
   }
 }
 
-export async function POST (request: Request) {
+export async function POST(request: Request) {
   const session = await getSession()
   const userId = session?.userId
 
@@ -56,18 +53,25 @@ export async function POST (request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const { message } = await request.json()
+  const { message, chatRoomId } = await request.json()
 
   await connectDB()
 
-  const newMessage = await Message.create({ message, userId })
+  const newMessage = await Message.create({
+    message,
+    userId,
+    chatRoomId: chatRoomId
+  })
+
   const populated = (await newMessage.populate(
     'userId',
     'username'
   )) as PopulatedMessage
+
   await User.findByIdAndUpdate(userId, {
     lastActiveTime: new Date()
   })
+
   return NextResponse.json(
     {
       _id: populated._id.toString(),

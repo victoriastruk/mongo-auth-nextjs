@@ -8,10 +8,10 @@ interface ChatRoom {
   creatorId?: { username: string; _id: string }
 }
 
-export default function ChatRoomList ({
+export default function ChatRoomList({
   onSelect
 }: {
-  onSelect: (roomId: string) => void
+  onSelect: (roomId: string, roomName: string) => void
 }) {
   const [chatRooms, setChatRooms] = useState<ChatRoom[]>([])
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
@@ -58,8 +58,8 @@ export default function ChatRoomList ({
         {chatRooms.map(room => (
           <li key={room._id} className='flex items-center justify-between'>
             <button
-              onClick={() => onSelect(room._id)}
-              className='w-full text-left px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded'
+              onClick={() => onSelect(room._id, room.name)}
+              className='w-full text-left px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded cursor-pointer'
             >
               {room.name}
             </button>

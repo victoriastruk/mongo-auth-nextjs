@@ -3,17 +3,14 @@
 import { useEffect, useRef, useState } from 'react'
 import CreateChatButton from '../CreateChatButton/CreateChatButton'
 
-async function fetchMessages () {
-  const response = await fetch('/api/messages')
-  const data = await response.json()
-  return data
-}
-
-async function sendMessageToServer (message: string) {
+async function sendMessageToServer(message: string, chatRoomId: string | null) {
   const response = await fetch('/api/messages', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ message })
+    body: JSON.stringify({
+      message,
+      chatRoomId
+    })
   })
   const data = await response.json()
   return data
@@ -27,25 +24,63 @@ type Message = {
   createdAt: string
 }
 
-export default function ChatComponent ({
-  currentUserId
+type MessageFromServer = {
+  _id: string
+  message: string
+  userId: {
+    username: string
+    _id: string
+  }
+  createdAt: string
+}
+
+export default function ChatComponent({
+  currentUserId,
+  selectedRoomId,
+  selectedRoomName
 }: {
   currentUserId: string
+  selectedRoomId: string | null
+  selectedRoomName: string
 }) {
   const [messages, setMessages] = useState<Message[]>([])
   const [newMessage, setNewMessage] = useState('')
   const bottomRef = useRef<HTMLDivElement>(null)
   const chatContainerRef = useRef<HTMLDivElement>(null)
 
+
+  async function fetchMessages() {
+    console.log('Fetching messages for room:', selectedRoomId)
+    const url = selectedRoomId
+      ? `/api/messages?chatRoomId=${selectedRoomId}`
+      : '/api/messages?chatRoomId=null'
+
+    const res = await fetch(url)
+    const data: MessageFromServer[] = await res.json()
+
+    if (data?.length) {
+      const formattedMessages: Message[] = data.map(m => ({
+        _id: m._id,
+        message: m.message,
+        username: m.userId.username,
+        userId: m.userId._id,
+        createdAt: m.createdAt
+      }))
+      setMessages(formattedMessages)
+    }
+  }
+
   useEffect(() => {
     const loadMessages = async () => {
-      const data = await fetchMessages()
-      setMessages(data)
+      await fetchMessages()
     }
+
     loadMessages()
+
     const interval = setInterval(loadMessages, 1000)
+
     return () => clearInterval(interval)
-  }, [])
+  }, [selectedRoomId])
 
   useEffect(() => {
     const chatContainer = chatContainerRef.current
@@ -53,7 +88,7 @@ export default function ChatComponent ({
 
     const isNearBottom =
       chatContainer.scrollHeight - chatContainer.scrollTop <=
-      chatContainer.clientHeight + 100 
+      chatContainer.clientHeight + 100
 
     if (isNearBottom) {
       bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -64,7 +99,7 @@ export default function ChatComponent ({
     e.preventDefault()
     if (!newMessage.trim()) return
 
-    const newMsg = await sendMessageToServer(newMessage)
+    const newMsg = await sendMessageToServer(newMessage, selectedRoomId)
     setMessages(prev => [...prev, newMsg])
     setNewMessage('')
   }
@@ -72,7 +107,7 @@ export default function ChatComponent ({
   return (
     <div className='overflow-y-auto flex flex-col flex-1 pr-2'>
       <div className='flex justify-between border-b-2 border-gray-200 mb-4 pb-4'>
-        <h2 className='text-2xl font-semibold'>Chat</h2>
+        <h2 className='text-2xl font-semibold'>Room: {selectedRoomName}</h2>
         <CreateChatButton />
       </div>
       <div
@@ -85,11 +120,10 @@ export default function ChatComponent ({
             return (
               <li
                 key={m._id}
-                className={`flex flex-col max-w-[70%] ${
-                  isCurrentUser
-                    ? 'self-end items-end'
-                    : 'self-start items-start'
-                }`}
+                className={`flex flex-col max-w-[70%] ${isCurrentUser
+                  ? 'self-end items-end'
+                  : 'self-start items-start'
+                  }`}
               >
                 <div className='flex items-center text-xs text-gray-500 mb-1'>
                   <span className='font-semibold mr-2'>{m.username}</span>
@@ -101,11 +135,10 @@ export default function ChatComponent ({
                   </span>
                 </div>
                 <div
-                  className={`px-4 py-2 rounded-lg w-fit ${
-                    isCurrentUser
-                      ? 'bg-blue-500 text-white'
-                      : 'bg-gray-100 text-gray-800'
-                  }`}
+                  className={`px-4 py-2 rounded-lg w-fit ${isCurrentUser
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-100 text-gray-800'
+                    }`}
                 >
                   {m.message}
                 </div>

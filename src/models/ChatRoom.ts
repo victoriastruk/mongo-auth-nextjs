@@ -11,7 +11,7 @@ export interface ChatRoom extends Document {
 const ChatRoomSchema = new Schema<ChatRoom>(
   {
     name: { type: String, required: true },
-    creatorId: { type: Schema.Types.ObjectId, ref: 'User', required: true }
+    creatorId: { type: Schema.Types.ObjectId, ref: 'User', required: false }
   },
   { timestamps: true }
 )
