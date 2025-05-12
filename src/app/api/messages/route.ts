@@ -1,19 +1,19 @@
-import { NextResponse } from 'next/server'
-import { getSession } from '@/lib/session'
-import { connectDB } from '@/lib/mongodb'
-import User from '@/models/User'
-import Message from '@/models/Message'
+import { NextResponse } from "next/server";
+import { getSession } from "@/lib/session";
+import { connectDB } from "@/lib/mongodb";
+import { Types } from 'mongoose'
+import User from "@/models/User";
+import Message from "@/models/Message";
 
 interface PopulatedMessage {
-  _id: string
-  message: string
-  createdAt: Date
+  _id: string;
+  message: string;
+  createdAt: Date;
   userId: {
-    _id: string
-    username: string
-  }
+    _id: string;
+    username: string;
+  };
 }
-
 export async function GET(req: Request) {
   await connectDB()
 
@@ -24,13 +24,14 @@ export async function GET(req: Request) {
     let filter = {}
 
     if (chatRoomId) {
-      if (chatRoomId === 'null') {
-        filter = { chatRoomId: null }
-      } else {
+      if (Types.ObjectId.isValid(chatRoomId)) {
         filter = { chatRoomId }
+      } else {
+        return NextResponse.json({ error: 'Invalid chatRoomId' }, { status: 400 })
       }
     } else {
-      filter = { name: 'Lobby' }
+
+      return NextResponse.json([], { status: 200 })
     }
 
     const messages = await Message.find(filter)
@@ -41,36 +42,38 @@ export async function GET(req: Request) {
     return NextResponse.json(messages)
   } catch (error) {
     console.error('Error fetching messages:', error)
-    return NextResponse.json({ error: 'Failed to fetch messages' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Failed to fetch messages' },
+      { status: 500 }
+    )
   }
 }
-
 export async function POST(request: Request) {
-  const session = await getSession()
-  const userId = session?.userId
+  const session = await getSession();
+  const userId = session?.userId;
 
   if (!userId) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { message, chatRoomId } = await request.json()
+  const { message, chatRoomId } = await request.json();
 
-  await connectDB()
+  await connectDB();
 
   const newMessage = await Message.create({
     message,
     userId,
-    chatRoomId: chatRoomId
-  })
+    chatRoomId: chatRoomId,
+  });
 
   const populated = (await newMessage.populate(
-    'userId',
-    'username'
-  )) as PopulatedMessage
+    "userId",
+    "username"
+  )) as PopulatedMessage;
 
   await User.findByIdAndUpdate(userId, {
-    lastActiveTime: new Date()
-  })
+    lastActiveTime: new Date(),
+  });
 
   return NextResponse.json(
     {
@@ -78,8 +81,8 @@ export async function POST(request: Request) {
       message: populated.message,
       username: populated.userId.username,
       createdAt: populated.createdAt,
-      userId: populated.userId._id.toString()
+      userId: populated.userId._id.toString(),
     },
     { status: 201 }
-  )
+  );
 }
