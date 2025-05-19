@@ -34,7 +34,7 @@ type MessageFromServer = {
   createdAt: string;
 };
 
-export default function ChatComponent({
+export default function Messages({
   currentUserId,
   selectedRoomId,
   selectedRoomName,
@@ -50,11 +50,10 @@ export default function ChatComponent({
 
   async function fetchMessages() {
     if (!selectedRoomId) {
+
       setMessages([]);
       return;
     }
-
-    console.log("Fetching messages for room:", selectedRoomId);
     const url = `/api/messages?chatRoomId=${selectedRoomId}`;
 
     const res = await fetch(url);
