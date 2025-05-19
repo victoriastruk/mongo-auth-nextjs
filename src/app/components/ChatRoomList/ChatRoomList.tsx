@@ -9,10 +9,16 @@ interface ChatRoom {
 }
 
 export default function ChatRoomList({
-  onSelect
+  onSelect,
+  selectedRoomId,
+  setSelectedRoomId,
+  setSelectedRoomName,
 }: {
   onSelect: (roomId: string, roomName: string) => void
-}) {
+  selectedRoomId: string | null
+  setSelectedRoomId: (id: string | null) => void
+  setSelectedRoomName: (name: string) => void
+})  {
   const [chatRooms, setChatRooms] = useState<ChatRoom[]>([])
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
 
@@ -36,21 +42,37 @@ export default function ChatRoomList({
     return () => clearInterval(intervalId)
   }, [])
 
-  const deleteChatRoom = async (roomId: string) => {
-    if (!currentUserId) return
+const deleteChatRoom = async (roomId: string) => {
+  if (!currentUserId) return
 
-    const res = await fetch(`/api/chatrooms/${roomId}`, {
-      method: 'DELETE'
-    })
+  const res = await fetch(`/api/chatrooms/${roomId}`, {
+    method: 'DELETE',
+  })
 
-    const data = await res.json()
-    if (data.success) {
-      setChatRooms(prevRooms => prevRooms.filter(room => room._id !== roomId))
-    } else {
-      alert(data.error)
+  const data = await res.json()
+
+  if (data.success) {
+
+    setChatRooms(prevRooms => prevRooms.filter(room => room._id !== roomId))
+
+    if (roomId === selectedRoomId) {
+      try {
+        const defaultRes = await fetch('/api/chatrooms/default')
+        if (!defaultRes.ok) throw new Error('Failed to get default room')
+
+        const defaultRoom = await defaultRes.json()
+        setSelectedRoomId(defaultRoom.id)
+        setSelectedRoomName(defaultRoom.name)
+      } catch (error) {
+        console.error('Error while switching to default room:', error)
+        setSelectedRoomId(null)
+        setSelectedRoomName('No selected.')
+      }
     }
+  } else {
+    alert(data.error)
   }
-
+}
   return (
     <div className='mb-4'>
       <h2 className='text-xl font-semibold mb-4'>Chatrooms</h2>

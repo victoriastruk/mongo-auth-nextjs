@@ -85,6 +85,9 @@ export default function Lobby() {
             <Logout />
           </div>
           <ChatRoomList
+            selectedRoomId={selectedRoomId}
+            setSelectedRoomId={setSelectedRoomId}
+            setSelectedRoomName={setSelectedRoomName}
             onSelect={(chatRoomId, name) => {
               setSelectedRoomId(chatRoomId);
               setSelectedRoomName(name);

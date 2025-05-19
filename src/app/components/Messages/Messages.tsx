@@ -50,7 +50,6 @@ export default function Messages({
 
   async function fetchMessages() {
     if (!selectedRoomId) {
-
       setMessages([]);
       return;
     }
@@ -59,16 +58,14 @@ export default function Messages({
     const res = await fetch(url);
     const data: MessageFromServer[] = await res.json();
 
-    if (data?.length) {
-      const formattedMessages: Message[] = data.map((m) => ({
-        _id: m._id,
-        message: m.message,
-        username: m.userId.username,
-        userId: m.userId._id,
-        createdAt: m.createdAt,
-      }));
-      setMessages(formattedMessages);
-    }
+    const formattedMessages: Message[] = data.map((m) => ({
+      _id: m._id,
+      message: m.message,
+      username: m.userId.username,
+      userId: m.userId._id,
+      createdAt: m.createdAt,
+    }));
+    setMessages(formattedMessages);
   }
 
   useEffect(() => {
