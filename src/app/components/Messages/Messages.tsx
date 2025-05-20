@@ -112,7 +112,7 @@ export default function Messages({
         ref={chatContainerRef}
         className="flex-1 overflow-y-auto max-h-[calc(100vh-200px)] pr-2"
       >
-        <ul className="flex flex-col justify-end flex-1 space-y-4">
+        <ul className="flex flex-col justify-end min-h-full space-y-4">
           {messages.map((m) => {
             const isCurrentUser = m.userId === currentUserId;
             return (

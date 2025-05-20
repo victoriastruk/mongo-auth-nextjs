@@ -40,6 +40,36 @@ export default function Lobby() {
     fetchSession();
   }, [router]);
 
+useEffect(() => {
+  if (!userId) return;
+
+  const updateActivity = async () => {
+    try {
+      await fetch("/api/update-activity", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId }),
+      });
+    } catch (error) {
+      console.error("Failed to update activity:", error);
+    }
+  };
+
+  updateActivity();
+  const interval = setInterval(updateActivity, 30000);
+
+  const handleUserActivity = () => updateActivity();
+
+  window.addEventListener("keydown", handleUserActivity);
+  window.addEventListener("click", handleUserActivity);
+
+  return () => {
+    clearInterval(interval);
+    window.removeEventListener("keydown", handleUserActivity);
+    window.removeEventListener("click", handleUserActivity);
+  };
+}, [userId]);
+
   useEffect(() => {
     const fetchDefaultRoom = async () => {
       if (userId && !selectedRoomId) {

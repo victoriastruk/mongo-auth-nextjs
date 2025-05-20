@@ -73,6 +73,7 @@ const deleteChatRoom = async (roomId: string) => {
     alert(data.error)
   }
 }
+
   return (
     <div className='mb-4'>
       <h2 className='text-xl font-semibold mb-4'>Chatrooms</h2>
