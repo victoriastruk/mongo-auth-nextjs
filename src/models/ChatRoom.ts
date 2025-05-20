@@ -1,9 +1,9 @@
 import mongoose, { Schema, Document, Model, Types } from 'mongoose'
-import { User } from './User'
+import { IUser } from './User'
 
 export interface ChatRoom extends Document {
   name: string
-  creatorId: Types.ObjectId | User
+  creatorId: Types.ObjectId | IUser
   createdAt: Date
   updatedAt: Date
 }
