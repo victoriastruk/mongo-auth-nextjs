@@ -1,4 +1,4 @@
-import { createChatRoom } from './actions'
+import { createChatRoom } from '@/app/actions/chatrooms/data'
 
 function CreateChatButton () {
   return (

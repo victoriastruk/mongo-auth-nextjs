@@ -1,7 +1,6 @@
-import { getAllChatRooms } from '../../components/ChatRoomList/actions'
+import { getAllChatRooms } from "../../components/ChatRoomList/actions";
 
-export async function GET () {
-  const rooms = await getAllChatRooms()
-  return Response.json(rooms)
+export async function GET() {
+  const rooms = await getAllChatRooms();
+  return Response.json(rooms);
 }
-

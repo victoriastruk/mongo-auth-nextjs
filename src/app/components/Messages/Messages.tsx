@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import CreateChatButton from "../CreateChatButton/CreateChatButton";
+import CreateChatButton from "../chatroom/CreateChatButton";
 
 async function sendMessageToServer(message: string, chatRoomId: string | null) {
   const response = await fetch("/api/messages", {

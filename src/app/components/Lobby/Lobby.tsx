@@ -5,9 +5,9 @@ import { useState } from "react";
 import useUserActivity from "@/app/hooks/useUserActivity";
 import useDefaultChatroom from "@/app/hooks/useDefaultChatroom";
 
-import ChatroomMembers from "../ChatroomMembers/ChatroomMembers";
+import ChatroomMembers from "../chatroom/ChatroomMembers";
 import Messages from "../Messages/Messages";
-import ChatRoomList from "../ChatRoomList/ChatRoomList";
+import ChatRoomList from "../chatroom/ChatRoomList";
 import Logout from "../Logout/Logout";
 
 type LobbyProps = {
