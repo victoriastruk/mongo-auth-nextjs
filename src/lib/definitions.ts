@@ -26,3 +26,19 @@ export type SessionPayload = {
   username: string
   expiresAt: Date
 }
+
+export type State = {
+  errors?: {
+    username?: string[];
+    phone?: string[];
+  };
+  message: string | null;
+};
+
+export type UserForm = {
+  id: string;
+  username: string;
+  phone: string;
+};
+
+

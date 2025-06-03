@@ -1,10 +1,17 @@
 "use server";
 import { connectDB } from "@/lib/mongodb";
+import { UserForm, State } from "@/lib/definitions";
 
-import User, { IUser } from "@/models/User"; 
+import User, { IUser } from "@/models/User";
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
 
 const ITEMS_PER_PAGE = 6;
+
+const UpdateUser = z.object({
+  username: z.string().min(1, "Username is required"),
+  phone: z.string().min(1, "Phone is required"),
+});
 
 export async function fetchFilteredUsers(
   query: string,
@@ -55,6 +62,62 @@ export async function fetchUsersPages(query: string): Promise<number> {
   } catch (error) {
     console.error("MongoDB Error:", error);
     throw new Error("Failed to fetch total number of users.");
+  }
+}
+
+
+export async function fetchUserById(id: string): Promise<UserForm | null> {
+  try {
+    await connectDB();
+    const user = await User.findById(id).lean();
+
+    if (!user) return null;
+
+    return {
+      id: user._id.toString(),
+      username: user.username,
+      phone: user.phone,
+    };
+  } catch (error) {
+    console.error("MongoDB Error:", error);
+    return null;
+  }
+}
+
+export async function updateUser(
+  id: string,
+  prevState: State,
+  formData: FormData
+): Promise<State> {
+  const validatedFields = UpdateUser.safeParse({
+    username: formData.get("username"),
+    phone: formData.get("phone"),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: "Failed to update user.",
+    };
+  }
+
+  const { username, phone } = validatedFields.data;
+
+  try {
+    await connectDB();
+    await User.findByIdAndUpdate(id, {
+      username,
+      phone,
+    });
+
+    revalidatePath("/dashboard/users");
+
+    return { message: "User updated successfully." };
+  } catch (error) {
+    console.error("Error updating user:", error);
+    return {
+      message: "Something went wrong. Failed to update user.",
+    };
   }
 }
 
