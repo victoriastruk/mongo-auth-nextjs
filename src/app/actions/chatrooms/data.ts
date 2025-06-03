@@ -26,3 +26,10 @@ export async function createChatRoom (formData: FormData): Promise<void> {
   await connectDB()
   await ChatRoom.create({ name, creatorId: userId })
 }
+
+export async function getAllChatRooms () {
+  await connectDB()
+
+  const rooms = await ChatRoom.find().populate('creatorId', 'username')
+  return rooms.map(room => room.toObject())
+}

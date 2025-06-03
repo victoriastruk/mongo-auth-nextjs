@@ -6,7 +6,7 @@ export function UpdateUser({ id }: { id: string }) {
   return (
     <Link
       href={`/dashboard/users/${id}/edit`}
-      className="rounded-md border p-2 hover:bg-blue-100"
+      className="rounded-md border border-gray-300 p-2 hover:bg-gray-100"
     >
       <PencilIcon className="w-5" />
     </Link>
@@ -18,7 +18,7 @@ export function DeleteUser({ id }: { id: string }) {
 
   return (
     <form action={deleteUserWithId}>
-      <button type="submit" className="rounded-md border p-2 hover:bg-red-200 cursor-pointer">
+      <button type="submit" className="rounded-md border border-gray-300 p-2 hover:bg-gray-100 cursor-pointer">
         <span className="sr-only">Delete</span>
         <TrashIcon className="w-5" />
       </button>

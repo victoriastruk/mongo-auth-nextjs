@@ -1,19 +1,17 @@
 "use server";
 import { connectDB } from "@/lib/mongodb";
 
-import User, { IUser } from "@/models/User"; // або звідки імпортуєш модель
+import User, { IUser } from "@/models/User"; 
 import { revalidatePath } from "next/cache";
 
 const ITEMS_PER_PAGE = 6;
 
-// Функція для пошуку користувачів з пагінацією
 export async function fetchFilteredUsers(
   query: string,
   currentPage: number
 ): Promise<IUser[]> {
   const skip = (currentPage - 1) * ITEMS_PER_PAGE;
 
-  // Побудова фільтра для пошуку по username або phone (регістронезалежно)
   const filter = query
     ? {
         $or: [
@@ -29,7 +27,7 @@ export async function fetchFilteredUsers(
     const users = await User.find(filter)
       .skip(skip)
       .limit(ITEMS_PER_PAGE)
-      .sort({ username: 1 }) // сортування за username за зростанням (можна змінити)
+      .sort({ username: 1 })
       .exec();
 
     return users;
@@ -39,7 +37,6 @@ export async function fetchFilteredUsers(
   }
 }
 
-// Функція для отримання кількості сторінок з урахуванням фільтра
 export async function fetchUsersPages(query: string): Promise<number> {
   const filter = query
     ? {
