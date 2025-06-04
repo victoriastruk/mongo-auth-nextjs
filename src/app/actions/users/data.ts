@@ -6,7 +6,7 @@ import User, { IUser } from "@/models/User";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-const ITEMS_PER_PAGE = 6;
+import { ITEMS_PER_PAGE } from "@/constants/config";
 
 const UpdateUser = z.object({
   username: z.string().min(1, "Username is required"),

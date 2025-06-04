@@ -1,6 +1,6 @@
 import { getCurrentUserId, getCurrentUsername } from "@/lib/session";
 import { redirect } from "next/navigation";
-import Lobby from "@/app/components/Lobby/Lobby";
+import Lobby from "@/app/ui/Lobby/Lobby";
 
 export default async function LobbyPage() {
   const userId = await getCurrentUserId();

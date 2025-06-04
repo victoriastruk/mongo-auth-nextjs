@@ -1,5 +1,5 @@
-import Form from "@/app/components/users/EditForm";
-import Breadcrumbs from "@/app/components/users/Breadcrumbs";
+import Form from "@/app/ui/dashboard/users/EditForm";
+import Breadcrumbs from "@/app/ui/Breadcrumbs";
 
 import { fetchUserById } from "@/app/actions/users/data";
 import { notFound } from "next/navigation";

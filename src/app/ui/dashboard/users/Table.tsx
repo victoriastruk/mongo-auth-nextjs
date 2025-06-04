@@ -1,4 +1,4 @@
-import { UpdateUser, DeleteUser } from "@/app/components/users/Buttons";
+import { UpdateUser, DeleteUser } from "@/app/ui/dashboard/users/Buttons";
 import { fetchFilteredUsers } from "@/app/actions/users/data";
 
 interface IUser {

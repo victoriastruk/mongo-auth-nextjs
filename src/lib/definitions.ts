@@ -40,5 +40,3 @@ export type UserForm = {
   username: string;
   phone: string;
 };
-
-

@@ -2,7 +2,7 @@
 
 import { UserForm, State } from "@/lib/definitions";
 import Link from "next/link";
-import { Button } from "@/app/components/Button";
+import { Button } from "@/app/ui/Button";
 import { updateUser } from "@/app/actions/users/data";
 import { useActionState } from "react";
 

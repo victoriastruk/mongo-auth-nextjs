@@ -1,7 +1,7 @@
-import Pagination from "@/app/components/users/Pagination";
-import Search from "@/app/components/Search";
-import Table from "@/app/components/users/Table";
-import { lusitana } from "@/app/components/fonts";
+import Pagination from "@/app/ui/dashboard/users/Pagination";
+import Search from "@/app/ui/Search";
+import Table from "@/app/ui/dashboard/users/Table";
+import { lusitana } from "@/app/ui/fonts";
 import { fetchUsersPages } from "@/app/actions/users/data";
 
 export default async function Page(props: {
