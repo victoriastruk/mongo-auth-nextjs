@@ -40,3 +40,9 @@ export type UserForm = {
   username: string;
   phone: string;
 };
+
+export type AdminForm = {
+  id: string;
+  username: string;
+  email: string;
+};

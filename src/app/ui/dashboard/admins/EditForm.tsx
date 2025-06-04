@@ -1,15 +1,15 @@
 "use client";
 
-import { UserForm, State } from "@/lib/definitions";
+import { AdminForm } from "@/lib/definitions";
 import Link from "next/link";
 import { Button } from "@/app/ui/Button";
-import { updateUser } from "@/app/actions/users/data";
+import { updateAdmin, State } from "@/app/actions/admins/update";
 import { useActionState } from "react";
 
-export default function EditUserForm({ user }: { user: UserForm }) {
+export default function EditAdminForm({ admin }: { admin: AdminForm }) {
   const initialState: State = { message: null, errors: {} };
-  const updateUserWithId = updateUser.bind(null, user.id);
-  const [state, formAction] = useActionState(updateUserWithId, initialState);
+  const updateAdminWithId = updateAdmin.bind(null, admin.id);
+  const [state, formAction] = useActionState(updateAdminWithId, initialState);
 
   return (
     <form action={formAction}>
@@ -25,7 +25,7 @@ export default function EditUserForm({ user }: { user: UserForm }) {
                 id="username"
                 name="username"
                 type="text"
-                defaultValue={user.username}
+                defaultValue={admin.username}
                 placeholder="Enter username"
                 className="peer block w-full rounded-md border border-gray-200 py-2 pl-3 placeholder:text-gray-500"
                 aria-describedby="username-error"
@@ -44,24 +44,24 @@ export default function EditUserForm({ user }: { user: UserForm }) {
 
         {/* Phone */}
         <div className="mb-4">
-          <label htmlFor="phone" className="mb-2 block font-medium">
-            Phone
+          <label htmlFor="email" className="mb-2 block font-medium">
+            Email
           </label>
           <div className="relative mt-2 rounded-md">
             <div className="relative">
               <input
-                id="phone"
-                name="phone"
-                type="text"
-                defaultValue={user.phone}
-                placeholder="Enter phone"
-                className="peer block w-full rounded-md border border-gray-200 py-2 pl-3 text-sm placeholder:text-gray-500"
-                aria-describedby="phone-error"
+                id="email"
+                name="email"
+                type="email"
+                defaultValue={admin.email}
+                placeholder="Enter email"
+                className="peer block w-full rounded-md border border-gray-200 py-2 pl-3 placeholder:text-gray-500"
+                aria-describedby="email-error"
               />
             </div>
-            <div id="phone-error" aria-live="polite" aria-atomic="true">
-              {state.errors?.phone &&
-                state.errors.phone.map((error: string) => (
+            <div id="email-error" aria-live="polite" aria-atomic="true">
+              {state.errors?.email &&
+                state.errors.email.map((error: string) => (
                   <p className="mt-2 text-sm text-red-500" key={error}>
                     {error}
                   </p>
@@ -80,12 +80,12 @@ export default function EditUserForm({ user }: { user: UserForm }) {
       </div>
       <div className="mt-6 flex justify-end gap-4">
         <Link
-          href="/dashboard/users"
+          href="/dashboard/admins"
           className="flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
         >
           Cancel
         </Link>
-        <Button type="submit">Edit User</Button>
+        <Button type="submit">Edit Admin</Button>
       </div>
     </form>
   );

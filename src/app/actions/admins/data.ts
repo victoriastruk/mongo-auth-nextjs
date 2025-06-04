@@ -1,6 +1,7 @@
 "use server";
 import { connectDB } from "@/lib/mongodb";
 import Admin, { IAdmin } from "@/models/Admin";
+import { AdminForm } from "@/lib/definitions";
 import { ITEMS_PER_PAGE } from "@/constants/config";
 
 export async function fetchAdmins() {
@@ -66,5 +67,23 @@ export async function fetchAdminPages(query: string): Promise<number> {
   } catch (error) {
     console.error("MongoDB Error", error);
     throw new Error("Failed to fetch total number of admins.");
+  }
+}
+
+export async function fetchAdminById(id: string): Promise<AdminForm | null> {
+  try {
+    await connectDB();
+    const admin = await Admin.findById(id).lean();
+
+    if (!admin) return null;
+
+    return {
+      id: admin._id.toString(),
+      username: admin.username,
+      email: admin.email,
+    };
+  } catch (error) {
+    console.error("MongoDB Error:", error);
+    return null;
   }
 }

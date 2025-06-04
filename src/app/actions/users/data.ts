@@ -4,6 +4,7 @@ import { UserForm, State } from "@/lib/definitions";
 
 import User, { IUser } from "@/models/User";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { ITEMS_PER_PAGE } from "@/constants/config";
@@ -65,7 +66,6 @@ export async function fetchUsersPages(query: string): Promise<number> {
   }
 }
 
-
 export async function fetchUserById(id: string): Promise<UserForm | null> {
   try {
     await connectDB();
@@ -111,8 +111,7 @@ export async function updateUser(
     });
 
     revalidatePath("/dashboard/users");
-
-    return { message: "User updated successfully." };
+    redirect("/dashboard/admins");
   } catch (error) {
     console.error("Error updating user:", error);
     return {
