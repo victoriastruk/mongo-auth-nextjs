@@ -1,4 +1,4 @@
-import Pagination from "@/app/ui/dashboard/users/Pagination";
+import Pagination from "@/app/ui/dashboard/Pagination";
 import Search from "@/app/ui/Search";
 import Table from "@/app/ui/dashboard/users/Table";
 import { lusitana } from "@/app/ui/fonts";

@@ -1,6 +1,6 @@
 "use server";
 import { connectDB } from "@/lib/mongodb";
-import Admin from "@/models/Admin";
+import Admin, { IAdmin } from "@/models/Admin";
 import { ITEMS_PER_PAGE } from "@/constants/config";
 
 export async function fetchAdmins() {
@@ -13,6 +13,37 @@ export async function fetchAdmins() {
     }));
   } catch (error) {
     console.error("DB Error", error);
+    throw new Error("Failed to fetch admins.");
+  }
+}
+
+export async function fetchFilteredAdmins(
+  query: string,
+  currentPage: number
+): Promise<IAdmin[]> {
+  const skip = (currentPage - 1) * ITEMS_PER_PAGE;
+
+  const filter = query
+    ? {
+        $or: [
+          { username: { $regex: query, $options: "i" } },
+          { email: { $regex: query, $options: "i" } },
+        ],
+      }
+    : {};
+
+  try {
+    await connectDB();
+
+    const admins = await Admin.find(filter)
+      .skip(skip)
+      .limit(ITEMS_PER_PAGE)
+      .sort({ username: 1 })
+      .exec();
+
+    return admins;
+  } catch (error) {
+    console.error("MongoDB Error:", error);
     throw new Error("Failed to fetch admins.");
   }
 }
