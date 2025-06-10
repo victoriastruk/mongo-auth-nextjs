@@ -1,5 +1,6 @@
 import { UpdateAdmin, DeleteAdmin } from "@/app/ui/dashboard/admins/Buttons";
 import { fetchFilteredAdmins } from "@/app/actions/admins/data";
+import { getCurrentAdminId } from "@/lib/session";
 
 interface IAdmin {
   _id: string;
@@ -15,7 +16,7 @@ export default async function AdminsTable({
   currentPage: number;
 }) {
   const admins: IAdmin[] = await fetchFilteredAdmins(query, currentPage);
-
+  const currentAdminId = await getCurrentAdminId();
   return (
     <div className="mt-6 flow-root">
       <div className="inline-block min-w-full align-middle">
@@ -33,7 +34,9 @@ export default async function AdminsTable({
                 <div className="flex w-full items-center justify-between pt-4">
                   <div className="flex justify-end gap-2">
                     <UpdateAdmin id={admin._id.toString()} />
-                    <DeleteAdmin id={admin._id.toString()} />
+                    {currentAdminId !== admin._id.toString() && (
+                      <DeleteAdmin id={admin._id.toString()} />
+                    )}
                   </div>
                 </div>
               </div>
@@ -68,7 +71,9 @@ export default async function AdminsTable({
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
                       <UpdateAdmin id={admin._id.toString()} />
-                      <DeleteAdmin id={admin._id.toString()} />
+                      {currentAdminId !== admin._id.toString() && (
+                        <DeleteAdmin id={admin._id.toString()} />
+                      )}
                     </div>
                   </td>
                 </tr>

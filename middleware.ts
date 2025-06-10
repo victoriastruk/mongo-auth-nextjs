@@ -1,33 +1,38 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { decrypt } from '@/lib/session'
-import { cookies } from 'next/headers'
+import { NextRequest, NextResponse } from "next/server";
+import { decrypt } from "@/lib/session";
 
-const protectedRoutes = ['/lobby']
-const publicRoutes = ['/login', '/register', '/']
+export default async function middleware(req: NextRequest) {
+  const path = req.nextUrl.pathname;
+  const sessionUser = await decrypt(req.cookies.get("session_user")?.value);
+  const sessionAdmin = await decrypt(req.cookies.get("session_admin")?.value);
 
-export default async function middleware (req: NextRequest) {
-  const path = req.nextUrl.pathname
-  const isProtectedRoute = protectedRoutes.includes(path)
-  const isPublicRoute = publicRoutes.includes(path)
-
-  const cookie = (await cookies()).get('session')?.value
-  const session = await decrypt(cookie)
-
-  if (isProtectedRoute && !session?.userId) {
-    return NextResponse.redirect(new URL('/login', req.nextUrl))
+  if (path.startsWith("/dashboard")) {
+    if (!sessionAdmin?.userId) {
+      return NextResponse.redirect(new URL("/dashboard-login", req.nextUrl));
+    }
   }
 
-  if (
-    isPublicRoute &&
-    session?.userId &&
-    !req.nextUrl.pathname.startsWith('/lobby')
-  ) {
-    return NextResponse.redirect(new URL('/lobby', req.nextUrl))
+  if (path.startsWith("/lobby")) {
+    if (!sessionUser?.userId) {
+      return NextResponse.redirect(new URL("/login", req.nextUrl));
+    }
   }
 
-  return NextResponse.next()
+  if (path === "/dashboard-login" && sessionAdmin?.userId) {
+    return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
+  }
+  if (path === "/login" && sessionUser?.userId) {
+    return NextResponse.redirect(new URL("/lobby", req.nextUrl));
+  }
+
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|.*\\.png$).*)']
-}
+  matcher: [
+    "/((?!api|_next/static|_next/image|.*\\.png$).*)",
+    "/dashboard/:path*",
+    "/dashboard/*",
+    "/dashboard",
+  ],
+};

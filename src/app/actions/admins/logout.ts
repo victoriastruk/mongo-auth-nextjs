@@ -1,9 +1,9 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { deleteSession } from "@/lib/session";
+import { deleteAdminSession } from "@/lib/session";
 
 export async function logout() {
-  await deleteSession();
+  await deleteAdminSession();
   redirect("/dashboard-login");
 }

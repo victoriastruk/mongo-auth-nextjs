@@ -2,7 +2,7 @@
 import { connectDB } from '@/lib/mongodb'
 import User, { IUser } from '@/models/User'
 import bcrypt from 'bcryptjs'
-import { createSession } from '@/lib/session'
+import { createUserSession } from '@/lib/session'
 
 async function updateUserTimes (user: IUser) {
   const now = new Date()
@@ -34,7 +34,7 @@ export async function loginUser (formData: FormData) {
       throw new Error('Invalid password')
     }
 
-    await createSession(user.id, user.username)
+    await createUserSession(user.id, user.username)
     await updateUserTimes(user)
   } catch (error: unknown) {
     if (error instanceof Error) {

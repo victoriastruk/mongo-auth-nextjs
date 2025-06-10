@@ -2,7 +2,7 @@
 import { connectDB } from "@/lib/mongodb";
 import Admin, { IAdmin } from "@/models/Admin";
 import bcrypt from "bcryptjs";
-import { createSession } from "@/lib/session";
+import { createAdminSession } from "@/lib/session";
 
 export async function loginAdmin(formData: FormData) {
   const email = formData.get("email") as string;
@@ -27,7 +27,7 @@ export async function loginAdmin(formData: FormData) {
       throw new Error("Invalid password");
     }
 
-    await createSession(admin.id, admin.username);
+    await createAdminSession(admin.id, admin.username);
   } catch (error: unknown) {
     if (error instanceof Error) {
       throw new Error(`${error.message}`);

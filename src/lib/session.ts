@@ -25,12 +25,23 @@ export async function decrypt(session: string | undefined = "") {
   }
 }
 
-export async function createSession(userId: string, username: string) {
+export async function getCurrentUserId() {
+  const session = await getUserSession();
+  const userId = session?.userId;
+  return userId;
+}
+export async function getCurrentUsername() {
+  const session = await getUserSession();
+  const username = session?.username;
+  return username;
+}
+
+export async function createUserSession(userId: string, username: string) {
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
   const session = await encrypt({ userId, username, expiresAt });
   const cookieStore = await cookies();
 
-  cookieStore.set("session", session, {
+  cookieStore.set("session_user", session, {
     httpOnly: true,
     secure: true,
     expires: expiresAt,
@@ -39,44 +50,49 @@ export async function createSession(userId: string, username: string) {
   });
 }
 
-export async function updateSession() {
-  const session = (await cookies()).get("session")?.value;
-  const payload = await decrypt(session);
+export async function getUserSession() {
+  const session = (await cookies()).get("session_user")?.value;
+  if (!session) return null;
+  return await decrypt(session);
+}
 
-  if (!session || !payload) {
-    return null;
-  }
-
-  const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-
+export async function deleteUserSession() {
   const cookieStore = await cookies();
-  cookieStore.set("session", session, {
+  cookieStore.delete("session_user");
+}
+
+export async function createAdminSession(adminId: string, username: string) {
+  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  const session = await encrypt({ userId: adminId, username, expiresAt });
+  const cookieStore = await cookies();
+
+  cookieStore.set("session_admin", session, {
     httpOnly: true,
     secure: true,
-    expires: expires,
+    expires: expiresAt,
     sameSite: "lax",
     path: "/",
   });
 }
 
-export async function getSession() {
-  const session = (await cookies()).get("session")?.value;
+export async function getAdminSession() {
+  const session = (await cookies()).get("session_admin")?.value;
   if (!session) return null;
-
   return await decrypt(session);
 }
 
-export async function getCurrentUserId() {
-  const session = await getSession();
+export async function getCurrentAdminId() {
+  const session = await getAdminSession();
   const userId = session?.userId;
   return userId;
 }
-export async function getCurrentUsername() {
-  const session = await getSession();
+export async function getCurrentAdminUsername() {
+  const session = await getAdminSession();
   const username = session?.username;
   return username;
 }
-export async function deleteSession() {
+
+export async function deleteAdminSession() {
   const cookieStore = await cookies();
-  cookieStore.delete("session");
+  cookieStore.delete("session_admin");
 }

@@ -2,10 +2,10 @@
 import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
 import { redirect } from "next/navigation";
-import { getSession, deleteSession } from "@/lib/session";
+import { getUserSession, deleteUserSession } from "@/lib/session";
 
 export async function logout() {
-  const session = await getSession();
+  const session = await getUserSession();
   await connectDB();
 
   if (session?.userId) {
@@ -14,6 +14,6 @@ export async function logout() {
     });
   }
 
-  await deleteSession();
+  await deleteUserSession();
   redirect("/login");
 }
