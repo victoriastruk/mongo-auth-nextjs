@@ -1,22 +1,27 @@
-import { createChatRoom } from '@/app/actions/chatrooms/data'
+"use client";
+import { useState } from "react";
+import CreateChatForm from "./CreateChatForm";
 
-function CreateChatButton () {
+export default function CreateChatButton() {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
-    <form className='flex gap-1' action={createChatRoom}>
-      <input
-        className='flex-1 border border-gray-300 rounded px-4 py-2 text-sm'
-        type='text'
-        name='name'
-        placeholder='Chatroom Name'
-      />
+    <>
       <button
-        type='submit'
-        className='bg-gray-100 hover:bg-gray-300 text-gray-700 px-4 py-2 cursor-pointer rounded'
+        onClick={() => setIsOpen(true)}
+        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded cursor-pointer"
       >
         Create Chat
       </button>
-    </form>
-  )
-}
 
-export default CreateChatButton
+      {isOpen && (
+        <div className="fixed inset-0 bg-gray-900/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-lg">
+            <h2 className="text-xl font-bold mb-4">New Chatroom</h2>
+            <CreateChatForm onClose={() => setIsOpen(false)} />
+          </div>
+        </div>
+      )}
+    </>
+  );
+}

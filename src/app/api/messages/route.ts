@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { getSession } from "@/lib/session";
+import { getCurrentUserId } from "@/lib/session";
 import { connectDB } from "@/lib/mongodb";
-import { Types } from 'mongoose'
+import { Types } from "mongoose";
 import User from "@/models/User";
 import Message from "@/models/Message";
 
@@ -15,42 +15,43 @@ interface PopulatedMessage {
   };
 }
 export async function GET(req: Request) {
-  await connectDB()
+  await connectDB();
 
-  const url = new URL(req.url)
-  const chatRoomId = url.searchParams.get('chatRoomId')
+  const url = new URL(req.url);
+  const chatRoomId = url.searchParams.get("chatRoomId");
 
   try {
-    let filter = {}
+    let filter = {};
 
     if (chatRoomId) {
       if (Types.ObjectId.isValid(chatRoomId)) {
-        filter = { chatRoomId }
+        filter = { chatRoomId };
       } else {
-        return NextResponse.json({ error: 'Invalid chatRoomId' }, { status: 400 })
+        return NextResponse.json(
+          { error: "Invalid chatRoomId" },
+          { status: 400 }
+        );
       }
     } else {
-
-      return NextResponse.json([], { status: 200 })
+      return NextResponse.json([], { status: 200 });
     }
 
     const messages = await Message.find(filter)
       .sort({ createdAt: 1 })
-      .populate({ path: 'userId', select: 'username' })
-      .lean()
+      .populate({ path: "userId", select: "username" })
+      .lean();
 
-    return NextResponse.json(messages)
+    return NextResponse.json(messages);
   } catch (error) {
-    console.error('Error fetching messages:', error)
+    console.error("Error fetching messages:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch messages' },
+      { error: "Failed to fetch messages" },
       { status: 500 }
-    )
+    );
   }
 }
 export async function POST(request: Request) {
-  const session = await getSession();
-  const userId = session?.userId;
+  const userId = await getCurrentUserId();
 
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

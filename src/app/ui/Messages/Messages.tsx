@@ -104,9 +104,8 @@ export default function Messages({
 
   return (
     <div className="overflow-y-auto flex flex-col flex-1 pr-2">
-      <div className="flex justify-between border-b-2 border-gray-200 mb-4 pb-4">
+      <div className="flex justify-between border-b-2 border-gray-200 mb-4 pb-6">
         <h2 className="text-2xl font-semibold">Room: {selectedRoomName}</h2>
-        <CreateChatButton />
       </div>
       <div
         ref={chatContainerRef}

@@ -8,6 +8,7 @@ import useDefaultChatroom from "@/app/hooks/useDefaultChatroom";
 import ChatroomMembers from "../chatroom/ChatroomMembers";
 import Messages from "../Messages/Messages";
 import ChatRoomList from "../chatroom/ChatRoomList";
+import CreateChatButton from "../chatroom/CreateChatButton";
 import Logout from "../Logout/Logout";
 
 type LobbyProps = {
@@ -42,7 +43,10 @@ export default function Lobby({ userId, username }: LobbyProps) {
             <span className="text-xl font-medium text-gray-700">
               {username}
             </span>
+            <div className="flex">
+            <CreateChatButton />
             <Logout />
+            </div>
           </div>
           <ChatRoomList
             selectedRoomId={selectedRoomId}
